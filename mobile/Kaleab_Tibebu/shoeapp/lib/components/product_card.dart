@@ -1,28 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:shoeapp/detail.dart';
 
 class ProductCard extends StatelessWidget {
   final String image;
   final String title;
-  final String price;
+  final double price;
   final double rating;
+  final String category;
+  final String description;
 
-  const ProductCard({
-    super.key,
-    required this.image,
-    required this.title,
-    required this.price,
-    required this.rating,
-  });
+  const ProductCard(
+      {super.key,
+      required this.image,
+      required this.title,
+      required this.price,
+      required this.rating,
+      required this.category,
+      required this.description});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const ProductDetailsPage()),
-        );
+        Navigator.pushNamed(context, '/detail', arguments: {
+          'image': image,
+          'price': price,
+          'title': title,
+          'rating': rating,
+          'category': category,
+          'description': description
+        });
       },
       child: Card(
         elevation: 4,
@@ -62,7 +68,7 @@ class ProductCard extends StatelessWidget {
                               fontFamily: 'Poppins'),
                         ),
                         Text(
-                          price,
+                          '\$${price.toString()}',
                           style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
@@ -74,9 +80,9 @@ class ProductCard extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          "Men's Shoe",
-                          style: TextStyle(
+                        Text(
+                          category,
+                          style: const TextStyle(
                               fontSize: 12,
                               color: Color(0xFFAAAAAA),
                               fontFamily: 'Poppins'),

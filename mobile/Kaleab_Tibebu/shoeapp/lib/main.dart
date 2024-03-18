@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shoeapp/data/data.dart';
 import 'package:shoeapp/components/product_card.dart';
+import 'package:shoeapp/detail.dart';
 import 'package:shoeapp/form.dart';
 
 void main() {
@@ -12,9 +13,41 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      onGenerateRoute: (settings) {
+        if (settings.name == '/detail') {
+          final args = settings.arguments as Map<String, dynamic>;
+          return _createCustomRoute(
+              settings,
+              ProductDetailsPage(
+                image: args['image'],
+                title: args['title'],
+                rating: args['rating'],
+                price: args['price'],
+                category: args['category'],
+                description: args['description'],
+              ));
+        }
+        if (settings.name == '/form') {
+          final args = settings.arguments as Map<String, dynamic>;
+          return _createCustomRoute(
+              settings,
+              FormPage(
+                image: args['image'],
+                title: args['title'],
+                price: args['price'],
+                category: args['category'],
+                isUpdate: args['isUpdate'],
+                description: args['description'],
+              ));
+        }
+        return null;
+      },
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const MyHomePage(title: 'e-commerce app'),
+      },
       title: 'Flutter Demo',
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
@@ -134,6 +167,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       title: product['title'],
                       price: product['price'],
                       rating: product['rating'],
+                      category: product['category'],
+                      description: product['description'],
                     );
                   },
                 ),
@@ -144,10 +179,14 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => FormPage()),
-          );
+          Navigator.pushNamed(context, '/form', arguments: {
+            'image': '',
+            'title': '',
+            'price': 0,
+            'category': '',
+            'description': '',
+            'isUpdate': false
+          });
         },
         backgroundColor: Colors.blue,
         shape: const CircleBorder(),
@@ -159,4 +198,25 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
+}
+
+Route _createCustomRoute(RouteSettings settings, Widget page) {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => page,
+    transitionDuration: const Duration(seconds: 1),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      const begin = Offset(1.0, 0.0);
+      const end = Offset.zero;
+      const curve = Curves.ease;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      var offsetAnimation = animation.drive(tween);
+
+      return SlideTransition(
+        position: offsetAnimation,
+        child: child,
+      );
+    },
+  );
 }

@@ -1,15 +1,33 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:shoeapp/data/data.dart';
 
 class FormPage extends StatelessWidget {
-  final TextEditingController productNameController = TextEditingController();
-  final TextEditingController productCategoryController =
-      TextEditingController();
-  final TextEditingController productPriceController = TextEditingController();
-  final TextEditingController productDescriptionController =
-      TextEditingController();
+  final String image;
+  final String title;
+  final double price;
+  final String category;
+  final String description;
+  final bool isUpdate;
 
-  FormPage({super.key});
+  final TextEditingController productNameController;
+  final TextEditingController productCategoryController;
+  final TextEditingController productPriceController;
+  final TextEditingController productDescriptionController;
+
+  FormPage({
+    super.key,
+    required this.image,
+    required this.title,
+    required this.price,
+    required this.category,
+    required this.description,
+    required this.isUpdate,
+  })  : productNameController = TextEditingController(text: title),
+        productCategoryController = TextEditingController(text: category),
+        productPriceController =
+            TextEditingController(text: price != 0 ? price.toString() : ''),
+        productDescriptionController = TextEditingController(text: description);
 
   @override
   Widget build(BuildContext context) {
@@ -26,8 +44,8 @@ class FormPage extends StatelessWidget {
               ),
               child: Image.asset('asset/images/backicon.png')),
         ),
-        title: const Text('Add Product',
-            style: TextStyle(
+        title: Text(isUpdate ? 'Update Product' : 'Add Product',
+            style: const TextStyle(
                 color: Color(0xFF3E3E3E),
                 fontFamily: 'Poppins',
                 fontSize: 16,
@@ -42,7 +60,7 @@ class FormPage extends StatelessWidget {
               children: [
                 _buildImageUploadField(),
                 const SizedBox(height: 10.0),
-                const Text('price',
+                const Text('name',
                     style: TextStyle(
                         color: Color(0xFF3E3E3E),
                         fontFamily: 'Poppins',
@@ -51,7 +69,6 @@ class FormPage extends StatelessWidget {
                 const SizedBox(height: 10.0),
                 _buildTextField(
                   controller: productNameController,
-                  maxLines: 2,
                 ),
                 const SizedBox(height: 10.0),
                 const Text('category',
@@ -63,7 +80,6 @@ class FormPage extends StatelessWidget {
                 const SizedBox(height: 10.0),
                 _buildTextField(
                   controller: productCategoryController,
-                  maxLines: 2,
                 ),
                 const SizedBox(height: 10.0),
                 const Text('price',
@@ -75,7 +91,6 @@ class FormPage extends StatelessWidget {
                 const SizedBox(height: 10.0),
                 _buildTextField(
                   controller: productPriceController,
-                  maxLines: 2,
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 10.0),
@@ -89,9 +104,9 @@ class FormPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 10.0),
                 _buildTextField(
-                  controller: productDescriptionController,
-                  maxLines: 5,
-                ),
+                    controller: productDescriptionController,
+                    maxLines: 100,
+                    height: 150),
                 const SizedBox(height: 30.0),
                 ElevatedButton(
                   onPressed: () {
@@ -112,7 +127,7 @@ class FormPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  child: const Text('ADD'),
+                  child: Text(isUpdate ? 'UPDATE' : 'ADD'),
                 ),
                 const SizedBox(height: 20),
                 OutlinedButton(
@@ -178,8 +193,10 @@ class FormPage extends StatelessWidget {
     required TextEditingController controller,
     TextInputType keyboardType = TextInputType.text,
     int maxLines = 1,
+    double height = 60,
   }) {
     return Container(
+      height: height,
       decoration: BoxDecoration(
         color: const Color(0xFFF3F3F3),
         borderRadius: BorderRadius.circular(10.0),
@@ -190,7 +207,7 @@ class FormPage extends StatelessWidget {
         maxLines: maxLines,
         decoration: const InputDecoration(
           border: InputBorder.none,
-          contentPadding: EdgeInsets.all(8.0),
+          contentPadding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 8),
         ),
       ),
     );
@@ -202,15 +219,28 @@ class FormPage extends StatelessWidget {
     double productPrice = double.tryParse(productPriceController.text) ?? 0.0;
     String productDescription = productDescriptionController.text;
 
-    if (kDebugMode) {
-      print(
-          'Product Added: $productName, $productCategory, $productPrice, $productDescription');
-    }
+    products.add({
+      'image': 'asset/images/jordan.jpg',
+      'title': productName,
+      'price': productPrice,
+      'category': productCategory,
+      'description': productDescription
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      backgroundColor: const Color(0xFF3F51F3),
+      content: Text(isUpdate
+          ? 'Product is successfully updated'
+          : 'Product is successfully added'),
+      duration: const Duration(seconds: 3),
+    ));
   }
 
   void _deleteProduct(BuildContext context) {
-    if (kDebugMode) {
-      print('Product Deleted');
-    }
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      backgroundColor: Color(0xFF3F51F3),
+      content: Text('Product is successfully deleted'),
+      duration: Duration(seconds: 3),
+    ));
   }
 }

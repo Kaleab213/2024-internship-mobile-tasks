@@ -1,9 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:shoeapp/components/size_select.dart';
-import 'package:shoeapp/form.dart';
 
 class ProductDetailsPage extends StatelessWidget {
-  const ProductDetailsPage({super.key});
+  final String image;
+  final String title;
+  final double price;
+  final double rating;
+  final String category;
+  final String description;
+
+  const ProductDetailsPage(
+      {super.key,
+      required this.image,
+      required this.title,
+      required this.price,
+      required this.rating,
+      required this.category,
+      required this.description});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +29,7 @@ class ProductDetailsPage extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset('asset/images/jordan.jpg',
+                  Image.asset(image,
                       fit: BoxFit.cover,
                       width: MediaQuery.of(context).size.width,
                       height: 286),
@@ -25,27 +38,27 @@ class ProductDetailsPage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Row(
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "Men's Shoe",
-                              style: TextStyle(
+                              category,
+                              style: const TextStyle(
                                   fontSize: 16,
                                   color: Color(0xFFAAAAAA),
                                   fontFamily: 'Poppins'),
                             ),
                             Row(
                               children: <Widget>[
-                                Icon(
+                                const Icon(
                                   Icons.star,
                                   color: Colors.amber,
                                   size: 24,
                                 ),
-                                SizedBox(width: 4),
+                                const SizedBox(width: 4),
                                 Text(
-                                  "(4.7)",
-                                  style: TextStyle(
+                                  rating.toString(),
+                                  style: const TextStyle(
                                       fontSize: 16,
                                       fontFamily: 'Poppins',
                                       color: Color(0xFFAAAAAA)),
@@ -57,20 +70,20 @@ class ProductDetailsPage extends StatelessWidget {
                         const SizedBox(
                           height: 12,
                         ),
-                        const Row(
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Derby Leather Shoes',
-                              style: TextStyle(
+                              title,
+                              style: const TextStyle(
                                   color: Color(0xFF3E3E3E),
                                   fontSize: 24,
                                   fontWeight: FontWeight.w700,
                                   fontFamily: 'Poppins'),
                             ),
                             Text(
-                              '568',
-                              style: TextStyle(
+                              '\$${price.toString()}',
+                              style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
                                   fontFamily: 'Poppins'),
@@ -100,9 +113,9 @@ class ProductDetailsPage extends StatelessWidget {
                         const SizedBox(
                           height: 30,
                         ),
-                        const Text(
-                          "A derby leather shoe is a classic and versatile footwear option characterized by its open lacing system, where the shoelace eyelets are sewn on top of the vamp (the upper part of the shoe). This design feature provides a more relaxed and casual look compared to the closed lacing system of oxford shoes. Derby shoes are typically made of high-quality leather, known for its durability and elegance, making them suitable for both formal and casual occasions. With their timeless style and comfortable fit, derby leather shoes are a staple in any well-rounded wardrobe.",
-                          style: TextStyle(
+                        Text(
+                          description,
+                          style: const TextStyle(
                               color: Color(0xFF666666),
                               fontSize: 14,
                               fontFamily: 'Poppins',
@@ -115,7 +128,15 @@ class ProductDetailsPage extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             OutlinedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
+                                  backgroundColor: Color(0xFF3F51F3),
+                                  content:
+                                      Text('Product is successfully deleted'),
+                                  duration: Duration(seconds: 3),
+                                ));
+                              },
                               style: ButtonStyle(
                                 side: MaterialStateProperty.all(
                                   const BorderSide(color: Colors.red),
@@ -140,11 +161,15 @@ class ProductDetailsPage extends StatelessWidget {
                             ),
                             ElevatedButton(
                               onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => FormPage()),
-                                );
+                                Navigator.pushNamed(context, '/form',
+                                    arguments: {
+                                      'image': image,
+                                      'title': title,
+                                      'price': price,
+                                      'category': category,
+                                      'isUpdate': true,
+                                      'description': description
+                                    });
                               },
                               style: ButtonStyle(
                                 backgroundColor:
